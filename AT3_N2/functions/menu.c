@@ -1,63 +1,142 @@
-﻿#include <stdlib.h>
+﻿#include <conio.h>
 #include <stdio.h>
+#include <windows.h>
+#include <stdlib.h>
 
 #include "../includes/functions.h"
 
-void showMenu() {
-	int option = 0;
+static int option(const int X, const int Y);
 
-	system("cls");
-	printf("|-------------------------------------------------------------------------------------------------------------------|\n");
-	printf("|                                                                                                                   |\n");
-	printf("|                                  ,--,                                                                              |\n");
-	printf("|                                ,--.'|                                                                              |\n");
-	printf("|                             ,--,  | :                                         ,--,                                 |\n");
-	printf("|                          ,---.'|  : '                     ,---,     ,---.   ,--.'|                                 |\n");
-	printf("|                          |   | : _' |                 ,-+-. /  |   '   ,'\\  |  |,                                  |\n");
-	printf("|                          :   : |.'  |    ,--.--.     ,--.'|'   |  /   /   | `--'_                                  |\n");
-	printf("|                          |   ' '  ; :   /       \\   |   |  ,\"' | .   ; ,. : ,' ,'|                                |\n");
-	printf("|                          '   |  .'. |  .--.  .-. |  |   | /  | | '   | |: : '  | |                                 |\n");
-	printf("|                          |   | :  | '   \\__\\/: . .  |   | |  | | '   | .; : |  | :                                 |\n");
-	printf("|                          '   : |  : ;   ,\" .--.; |  |   | |  |/  |   :    | '  : |__                              |\n");
-	printf("|                          |   | '  ,/   /  /  ,.  |  |   | |--'    \\   \\  /  |  | '.'|                              |\n");
-	printf("|                          ;   : ;--'   ;  :   .'   \\ |   |/         `----'   ;  :    ;                              |\n");
-	printf("|                          |   ,/       |  ,     .-./ '---'                   |  ,   /                               |\n");
-	printf("|                         '---'         `--`---'                              ---`-'                                |\n");
-	printf("|                                                                                                                   |\n");
-	printf("|                                                    (pressione)                                                    |\n");
-	printf("|                                                                                                                   |\n");
-	printf("|                                                 1 - INICIAR JOGO                                                  |\n");
-	printf("|                                              2 - REGRAS E INSTRUÇÕES                                              |\n");
-	printf("|                                                     3 - SAIR                                                      |\n");
-	printf("|                                                                                                                   |\n");
-	printf("|-------------------------------------------------------------------------------------------------------------------|\n");
-	printf("\n\n");
-	printf("Escolha uma opção: ");
+void showMenu(int X, int Y) {
+	int key = 0;
 
-	while(scanf("%d", &option) != 1 && option < 1 || option > 3) {
-		printf("Opção inválida, tente novamente: ");
-		while(getchar() != '\n');
-	};
+	textBackground(GREEN);
+	printXY(X, Y++, " +------ Menu Principal ------+");
+	printXY(X, Y++, " |                            |");
+	textColor(YELLOW);
+	printXY(X, Y++, " | - Jogar                    |");
+	textColor(WHITE);
+	printXY(X, Y++, " | - Sobre                    |");
+	textColor(WHITE);
+	printXY(X, Y++, " | - Sair                     |");
+	printXY(X, Y++, " +----------------------------+");
 
-	switch(option) {
-		case 1:
-		{
-			clearScreen();
-			printf("Opção 1\n\n");
-			backToMenu();
-			break;
-		}
-		case 2:
-		{
-			clearScreen();
-			printf("Opção 2\n\n");
-			backToMenu();
-			break;
-		}
-		case 3:
-		{
-			clearScreen();
-			break;
+	int y = 7;
+
+	printXY(X, y, ">\n");
+
+	while(true) {
+		key = getch();
+
+		if(key == 224) {
+			switch(getch()) {
+				case DOWN:
+				{
+					if(y > 7) {
+						gotoXY(X, y);
+						printf(" ");
+						gotoXY(X, --y);
+						printf(">");
+					}
+					break;
+				}
+				case UP:
+				{
+					if(y < 9) {
+						gotoXY(X, y);
+						printf(" ");
+						gotoXY(X, ++y);
+						printf(">");
+					}
+					break;
+				}
+			}
+		} else if(key == ENTER) {
+			textBackground(BLUE);
+			int choice = option(X, y);
+
+			if(choice == 1) {
+				goto end;
+			} else {
+				backToMenu(X, 5);
+			}
 		}
 	}
+
+	end:
+	{
+		textBackground(BLUE);
+		pauseScreen();
+		exit(0);
+	}
+}
+
+static int option(const int X, const int Y) {
+	clearScreen();
+
+	int center = 0, y = 5;
+
+	switch(Y) {
+		case 7:
+		{
+			center = 40;
+			textBackground(BLUE);
+			gameEngine(center, Y);
+			break;
+		}
+
+		case 8:
+		{
+			center = 30;
+
+			textBackground(GREEN);
+			printXY(center, y++,
+				"+----------------------------- Sobre -------------------------------+");
+			printXY(center, y++,
+				"| A Torre de Hanoi e um dos mais famosos jogos de Matematica.       |");
+			printXY(center, y++,
+				"| Ele consiste de uma base contendo tres pilares (hastes), em um    |");
+			printXY(center, y++,
+				"| dos quais esta disposta uma torre formada por alguns discos de    |");
+			printXY(center, y++,
+				"| diametros diferentes, furados no centro e colocados uns sobre     |");
+			printXY(center, y++,
+				"| os outros, em ordem crescente de diametro, de cima para baixo     |");
+			printXY(center, y++,
+				"| O numero de discos pode variar.                                   |");
+			printXY(center, y++,
+				"+-------------------------------------------------------------------+");
+			printf("\n\n\n");
+
+			break;
+		}
+
+		case 9:
+		{
+			center = 30;
+
+			textBackground(RED);
+			printXY(center, y++,
+				"+-------------------------------------------------------------------+");
+			printXY(center, y++,
+				"|                                                                   |");
+			printXY(center, y++,
+				"|                                                                   |");
+			printXY(center, y++,
+				"|                           FIM DO PROGRAMA                         |");
+			printXY(center, y++,
+				"|                                                                   |");
+			printXY(center, y++,
+				"|                                                                   |");
+			printXY(center, y++,
+				"+-------------------------------------------------------------------+");
+			printf("\n\n\n");
+
+			return 1;
+		}
+	}
+
+	textBackground(BLUE);
+
+	return 0;
 }

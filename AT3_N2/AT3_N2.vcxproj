@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="functions\functions.c" />
+    <ClCompile Include="functions\game.c" />
     <ClCompile Include="functions\menu.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
