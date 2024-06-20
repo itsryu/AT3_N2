@@ -34,6 +34,8 @@ typedef enum DOS_COLORS {
 #define UP 80
 #define DOWN 72
 #define ENTER 13
+#define LEFT 75
+#define RIGHT 77
 #define ESC 27
 #define TORRES 3
 

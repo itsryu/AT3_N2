@@ -1,8 +1,8 @@
-#include <ctype.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <conio.h>
 
 #include "../includes/functions.h"
 
@@ -71,7 +71,7 @@ static void moveDisk(Torre* origem, Torre* dest, int* movements) {
 	if(origem->topo == NULL) {
 		clearScreen();
 		textBackground(RED);
-		printf("\nMovimento incorreto! A torre de selecionada está vazia.");
+		printf("\nMovimento incorreto! A torre selecionada está vazia.");
 	} else if(dest->topo != NULL && origem->topo->num > dest->topo->num) {
 		clearScreen();
 		textBackground(RED);
@@ -83,25 +83,104 @@ static void moveDisk(Torre* origem, Torre* dest, int* movements) {
 	}
 }
 
-static void getUserInput(Torre** torre, int* movements) {
+static void getUserInput(Torre** torre, int num, int* movements) {
+	int i = 0, key = 0, selectedIndex = -1, y = (10 + num);
+	int coordTorre[TORRES] = { 42, 64, 86 };
 	char de, para;
 
+	printXY(coordTorre[0], y, "^\n");
+
 	while(true) {
-		printf("Digite o movimento (Ex: 'A B' para mover de A para B): ");
-		scanf(" %c %c", &de, &para);
+		key = getch();
 
-		de = toupper(de);
-		para = toupper(para);
+		if(key == 224) {
+			switch(getch()) {
+				case LEFT:
+					if(i > 0) {
+						gotoXY(coordTorre[i], y);
+						printf("  ");
 
-		int origem = de - 'A';
-		int dest = para - 'A';
+						i--;
+						gotoXY(coordTorre[i], y);
+						printf("^");
+					}
+					break;
+				case RIGHT:
+					if(i < (TORRES - 1)) {
+						gotoXY(coordTorre[i], y);
+						printf("  ");
 
-		if(origem >= 0 && origem < TORRES && dest >= 0 && dest < TORRES) {
-			return moveDisk(torre[origem], torre[dest], movements);
-		} else {
-			printf("Torre inválida. Por favor, digite novamente.\n");
+						i++;
+						gotoXY(coordTorre[i], y);
+						printf("^");
+					}
+					break;
+			}
+		} else if(key == ENTER) {
+			textColor(RED);
+			de = (coordTorre[i] == 42) ? 'A' : (coordTorre[i] == 64) ? 'B' : 'C';
+			selectedIndex = i;
+			break;
+		} else if(key == ESC) {
+			printf("\n\n");
+			textBackground(BLUE);
+			backToMenu(45, 5);
+			break;
 		}
 	}
+
+	textColor(WHITE);
+	i = (selectedIndex == 0) ? 1 : 0;
+	y = (10 + num);
+
+	printXY(coordTorre[i], y, "^\n");
+
+	while(true) {
+		key = getch();
+
+		if(key == 224) {
+			switch(getch()) {
+				case LEFT:
+					if(i > 0) {
+						int newIndex = i - 1;
+						if(newIndex == selectedIndex) newIndex--;
+						if(newIndex >= 0) {
+							gotoXY(coordTorre[i], y);
+							printf("  ");
+
+							i = newIndex;
+							gotoXY(coordTorre[i], y);
+							printf("^");
+						}
+					}
+					break;
+				case RIGHT:
+					if(i < (TORRES - 1)) {
+						int newIndex = i + 1;
+						if(newIndex == selectedIndex) newIndex++;
+						if(newIndex < TORRES) {
+							gotoXY(coordTorre[i], y);
+							printf("  ");
+
+							i = newIndex;
+							gotoXY(coordTorre[i], y);
+							printf("^");
+						}
+					}
+					break;
+			}
+		} else if(key == ENTER) {
+			para = (coordTorre[i] == 42) ? 'A' : (coordTorre[i] == 64) ? 'B' : 'C';
+			break;
+		} else if(key == ESC) {
+			printf("\n\n");
+			textBackground(BLUE);
+			backToMenu(45, 5);
+			break;
+		}
+	}
+
+	moveDisk(torre[de - 'A'], torre[para - 'A'], movements);
 }
 
 static void printVictoryScreen(const int X, int Y, const int movements) {
@@ -122,11 +201,11 @@ static void printVictoryScreen(const int X, int Y, const int movements) {
 }
 
 static void printTowers(Torre** torre, int num, const int X, const int Y) {
-	int y = Y;
+	int y = Y, key = 0;
 	char caractere[100];
 
 	textBackground(GREEN);
-	printXY(X, y++," +------------------------ Torre de Hanoi --------------------------+");
+	printXY(X, y++, " +------------------------ Torre de Hanoi --------------------------+");
 	printXY(X, y++, " |                                                                  |");
 	printXY(X, y++, " |          A                     B                     C           |");
 	printXY(X, y++, " |                                                                  |");
@@ -157,7 +236,11 @@ static void printTowers(Torre** torre, int num, const int X, const int Y) {
 	}
 
 	printXY(X, y++, " +------------------------------------------------------------------+");
+	textBackground(BLUE);
+	printXY(X, y++, "                                                                     ");
 	printf("\n\n");
+
+	printf("Aperte ESC para voltar ao menu principal.");
 }
 
 void gameEngine(const int X, const int Y) {
@@ -214,7 +297,7 @@ void gameEngine(const int X, const int Y) {
 
 			printTowers(torre, num, 30, y);
 			textBackground(BLUE);
-			getUserInput(torre, &movements);
+			getUserInput(torre, num, &movements);
 		}
 
 		clearScreen();
