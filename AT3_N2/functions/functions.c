@@ -62,7 +62,7 @@ void textBackground(DOS_COLORS color) {
 	SetConsoleTextAttribute(hl, bufferInfo.wAttributes |= (color << 4));
 }
 
-void printXY(int X, int Y, char* input) {
+void printXY(const int X, const int Y, const char* input) {
 	gotoXY(X, Y);
 	printf("%s", input);
 }

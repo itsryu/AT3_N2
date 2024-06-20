@@ -10,13 +10,11 @@ void showMenu(const int X, int Y) {
 	int key = 0;
 
 	textBackground(GREEN);
+	textColor(WHITE);
 	printXY(X, Y++, " +------ Menu Principal ------+");
 	printXY(X, Y++, " |                            |");
-	textColor(YELLOW);
 	printXY(X, Y++, " | - Jogar                    |");
-	textColor(WHITE);
 	printXY(X, Y++, " | - Sobre                    |");
-	textColor(WHITE);
 	printXY(X, Y++, " | - Sair                     |");
 	printXY(X, Y++, " +----------------------------+");
 
