@@ -2,8 +2,6 @@
 
 set dir=%~dp0
 
-
-
 cd %dir% && gcc ./functions/functions.c ./functions/game.c ./functions/menu.c ./main.c -o main.exe
 
 if %errorlevel% equ 0 (

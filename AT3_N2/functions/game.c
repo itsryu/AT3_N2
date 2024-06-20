@@ -1,3 +1,5 @@
+#include <ctype.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,208 +7,226 @@
 #include "../includes/functions.h"
 
 static Torre* createStack() {
-  Torre* torre = (Torre*)malloc(sizeof(Torre));
+	Torre* torre = (Torre*) malloc(sizeof(Torre));
 
-  if (torre == NULL) {
-    printf("Erro ao alocar memória. Encerrando o programa...\n");
-    exit(1);
-  } else {
-    torre->topo = NULL;
-    torre->tam = 0;
+	if(torre == NULL) {
+		printf("Erro ao alocar memória. Encerrando o programa...\n");
+		exit(1);
+	} else {
+		torre->topo = NULL;
+		torre->tam = 0;
 
-    return torre;
-  }
+		return torre;
+	}
 }
 
-static int isEmpty(Torre* torre) { return torre->tam == 0; }
+static int isEmpty(Torre* torre) {
+	return torre->tam == 0;
+}
 
 static void push(Torre* torre, int num) {
-  No* novoNo = (No*)malloc(sizeof(No));
+	No* novoNo = (No*) malloc(sizeof(No));
 
-  if (novoNo == NULL) {
-    printf("Erro ao alocar memória. Encerrando o programa...\n");
-    exit(1);
-  } else {
-    novoNo->num = num;
-    novoNo->prox = torre->topo;
-    torre->topo = novoNo;
-    torre->tam++;
-  }
+	if(novoNo == NULL) {
+		printf("Erro ao alocar memória. Encerrando o programa...\n");
+		exit(1);
+	} else {
+		novoNo->num = num;
+		novoNo->prox = torre->topo;
+		torre->topo = novoNo;
+		torre->tam++;
+	}
 }
 
 static int pop(Torre* torre) {
-  if (isEmpty(torre)) {
-    return -1;
-  } else {
-    No* temp = torre->topo;
-    int num = temp->num;
+	if(isEmpty(torre)) {
+		return -1;
+	} else {
+		No* temp = torre->topo;
+		int num = temp->num;
 
-    torre->topo = torre->topo->prox;
-    free(temp);
-    torre->tam--;
+		torre->topo = torre->topo->prox;
+		free(temp);
+		torre->tam--;
 
-    return num;
-  }
+		return num;
+	}
 }
 
 static void initializeGame(Torre** torre, int num) {
-  for (int i = 0; i < TORRES; i++) {
-    torre[i] = createStack();
-  }
+	for(int i = 0; i < TORRES; i++) {
+		torre[i] = createStack();
+	}
 
-  for (int i = num; i > 0; i--) {
-    push(torre[0], i);
-  }
+	for(int i = num; i > 0; i--) {
+		push(torre[0], i);
+	}
 }
 
-static int isGameWon(Torre** torre, int num) { return torre[2]->tam == num; }
-
-static void moveDisk(Torre* origem, Torre* dest) {
-  if (origem->topo == NULL) {
-    printf("Movimento inválido! A torre de origem está vazia.\n");
-    return;
-  } else if (dest->topo != NULL && origem->topo->num > dest->topo->num) {
-    printf(
-        "Movimento inválido! Não pode colocar um disco maior sobre um "
-        "menor.\n");
-    return;
-  } else {
-    clearScreen();
-    return push(dest, pop(origem));
-  }
+static int isGameWon(Torre** torre, int num) {
+	return torre[2]->tam == num;
 }
 
-static void getUserInput(Torre** torre) {
-  char de, para;
+static void moveDisk(Torre* origem, Torre* dest, int* movements) {
+	if(origem->topo == NULL) {
+		clearScreen();
+		textBackground(RED);
+		printf("\nMovimento incorreto! A torre de origem está vazia.");
+	} else if(dest->topo != NULL && origem->topo->num > dest->topo->num) {
+		clearScreen();
+		textBackground(RED);
+		printf("\nMovimento incorreto! Não se pode colocar um disco maior sobre um menor.");
+	} else {
+		clearScreen();
+		(*movements)++;
+		return push(dest, pop(origem));
+	}
+}
 
-  printf("Digite o movimento (Ex: A B para mover de A para B): ");
-  scanf(" %c %c", &de, &para);
+static void getUserInput(Torre** torre, int* movements) {
+	char de, para;
 
-  int origem = de - 'A';
-  int dest = para - 'A';
+	while(true) {
+		printf("Digite o movimento (Ex: 'A B' para mover de A para B): ");
+		scanf(" %c %c", &de, &para);
 
-  moveDisk(torre[origem], torre[dest]);
+		de = toupper(de);
+		para = toupper(para);
+
+		int origem = de - 'A';
+		int dest = para - 'A';
+
+		if(origem >= 0 && origem < TORRES && dest >= 0 && dest < TORRES) {
+			return moveDisk(torre[origem], torre[dest], movements);
+		} else {
+			printf("Torre inválida. Por favor, digite novamente.\n");
+		}
+	}
 }
 
 static void printVictoryScreen(const int X, int Y, const int movements) {
-  char buffer[50];
+	char buffer[50];
 
-  textBackground(GREEN);
-  printXY(X, Y++, "+---------------- VENCEU ------------------+");
-  printXY(X, Y++, "|                                          |");
-  printXY(X, Y++, "|             Seus movimentos:             |");
-  printXY(X, Y++, "|                                          |");
-  sprintf(buffer, "|                   %d                      |", movements);
-  printXY(X, Y++, buffer);
-  printXY(X, Y++, "|                                          |");
-  printXY(X, Y++, "+------------------------------------------+");
-  printf("\n\n");
+	textBackground(GREEN);
+	printXY(X, Y++, "+---------------- VENCEU ------------------+");
+	printXY(X, Y++, "|                                          |");
+	printXY(X, Y++, "|             Seus movimentos:             |");
+	printXY(X, Y++, "|                                          |");
+	sprintf(buffer, "|                   %d                      |", movements);
+	printXY(X, Y++, buffer);
+	printXY(X, Y++, "|                                          |");
+	printXY(X, Y++, "+------------------------------------------+");
+	printf("\n\n");
 
-  textBackground(BLUE);
+	textBackground(BLUE);
 }
 
 static void printTowers(Torre** torre, int num, const int X, const int Y) {
-  int y = Y;
-  char caractere[100];
+	int y = Y;
+	char caractere[100];
 
-  textBackground(GREEN);
-  printXY(
-      X, y++,
-      " +------------------------ Torre de Hanoi --------------------------+");
-  printXY(
-      X, y++,
-      " |                                                                  |");
-  printXY(
-      X, y++,
-      " |          A                     B                     C           |");
-  printXY(
-      X, y++,
-      " |                                                                  |");
+	textBackground(GREEN);
+	printXY(
+		X, y++,
+		" +------------------------ Torre de Hanoi --------------------------+");
+	printXY(X, y++, " |                                                                  |");
+	printXY(X, y++, " |          A                     B                     C           |");
+	printXY(X, y++, " |                                                                  |");
 
-  for (int i = num - 1; i >= 0; i--) {
-    sprintf(caractere, " |");
+	for(int i = num - 1; i >= 0; i--) {
+		sprintf(caractere, " |");
 
-    for (int j = 0; j < TORRES; j++) {
-      if (i < torre[j]->tam) {
-        No* atual = torre[j]->topo;
-        for (int k = 0; k < torre[j]->tam - i - 1; k++) {
-          atual = atual->prox;
-        }
-        char disco[50];
-        sprintf(disco, "          %d", atual->num);
-        strcat(caractere, disco);
-      } else {
-        strcat(caractere, "          |");
-      }
-      strcat(caractere, "           ");
-    }
+		for(int j = 0; j < TORRES; j++) {
+			if(i < torre[j]->tam) {
+				No* atual = torre[j]->topo;
 
-    strcat(caractere, "|");
-    printXY(X, y++, caractere);
-  }
+				for(int k = 0; k < torre[j]->tam - i - 1; k++) {
+					atual = atual->prox;
+				}
 
-  printXY(
-      X, y++,
-      " +------------------------------------------------------------------+");
-  printf("\n\n");
+				char disco[50];
+
+				sprintf(disco, "          %d", atual->num);
+				strcat(caractere, disco);
+			} else {
+				strcat(caractere, "          |");
+			}
+			strcat(caractere, "           ");
+		}
+
+		strcat(caractere, "|");
+		printXY(X, y++, caractere);
+	}
+
+	printXY(X, y++, " +------------------------------------------------------------------+");
+	printf("\n\n");
 }
 void gameEngine(const int X, const int Y) {
-  int num = 0, y = 5;
+	int num = 0, y = 5;
 
-  textBackground(GREEN);
-  printXY(X, y++, "+----------------- Discos -----------------+");
-  printXY(X, y++, "|                                          |");
-  printXY(X, y++, "|      Digite a quantidade de discos:      |");
-  printXY(X, y++, "|                                          |");
-  printXY(X, y++, "|                                          |");
-  printXY(X, y++, "+------------------------------------------+");
-  textBackground(BLUE);
+	textBackground(GREEN);
+	printXY(X, y++, "+----------------- Discos -----------------+");
+	printXY(X, y++, "|                                          |");
+	printXY(X, y++, "|      Digite a quantidade de discos:      |");
+	printXY(X, y++, "|                                          |");
+	printXY(X, y++, "|                                          |");
+	printXY(X, y++, "+------------------------------------------+");
+	textBackground(BLUE);
 
-  while (scanfXY(60, 8, "%d", &num) != 1 || (num < 3 || num > 30) && (y = 5)) {
-    clearScreen();
+	while(scanfXY(60, 8, " %d", &num) != 1 || (num < 3 || num > 9)) {
+		y = 5;
 
-    textBackground(RED);
-    textColor(WHITE);
-    printXY(X, y++, "+---------------- Discos ------------------+");
-    printXY(X, y++, "|                                          |");
-    printXY(X, y++, "|      Digite a quantidade de discos:      |");
-    printXY(X, y++, "|                                          |");
-    printXY(X, y++, "|                                          |");
-    printXY(X, y++, "| * Deve ser maior que 3 ou menor que 30   |");
-    printXY(X, y++, "|                                          |");
-    printXY(X, y++, "+------------------------------------------+");
-  }
+		clearScreen();
 
-  textBackground(BLUE);
-  clearScreen();
+		textBackground(RED);
+		textColor(WHITE);
+		printXY(X, y++, "+---------------- Discos ------------------+");
+		printXY(X, y++, "|                                          |");
+		printXY(X, y++, "|      Digite a quantidade de discos:      |");
+		printXY(X, y++, "|                                          |");
+		printXY(X, y++, "|                                          |");
+		printXY(X, y++, "| * Deve ser maior que 3 ou menor que 10   |");
+		printXY(X, y++, "|                                          |");
+		printXY(X, y++, "+------------------------------------------+");
+		textBackground(BLUE);
 
-  y = 5;
+		while(getchar() != '\n');
+	}
 
-  Torre** torre = (Torre**)malloc(TORRES * sizeof(Torre*));
+	textBackground(BLUE);
+	clearScreen();
 
-  if (torre == NULL) {
-    printf("Erro ao alocar memória. Encerrando o programa...\n");
-    exit(1);
-  } else {
-    int movements = 0;
-    initializeGame(torre, num);
+	y = 5;
 
-    while (!isGameWon(torre, num)) {
-      printTowers(torre, num, 30, y);
-      textBackground(BLUE);
-      getUserInput(torre);
-      movements++;
-    }
+	Torre** torre = (Torre**) malloc(TORRES * sizeof(Torre*));
 
-    clearScreen();
-    printVictoryScreen(X, y, movements);
+	if(torre == NULL) {
+		printf("Erro ao alocar memória. Encerrando o programa...\n");
+		exit(1);
+	} else {
+		int movements = 0;
+		const int minMovements = pow(2, num) - 1;
+		initializeGame(torre, num);
 
-    for (int i = 0; i < TORRES; i++) {
-      while (torre[i]->tam > 0) pop(torre[i]);
+		while(!isGameWon(torre, num)) {
+			textBackground(BLUE);
+			printf("\n\nMínimo de movimentos possíveis: %d\n", minMovements);
+			printf("Seus movimentos: %d\n", movements);
 
-      free(torre[i]);
-    }
+			printTowers(torre, num, 30, y);
+			textBackground(BLUE);
+			getUserInput(torre, &movements);
+		}
 
-    backToMenu(X, Y);
-  }
+		clearScreen();
+		printVictoryScreen(X, y, movements);
+
+		for(int i = 0; i < TORRES; i++) {
+			while(torre[i]->tam > 0) pop(torre[i]);
+
+			free(torre[i]);
+		}
+
+		backToMenu(X, Y);
+	}
 }
