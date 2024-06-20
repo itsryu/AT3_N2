@@ -287,7 +287,7 @@ void gameEngine(const int X, const int Y) {
 		exit(1);
 	} else {
 		int movements = 0;
-		const int minMovements = pow(2, num) - 1;
+		const int minMovements = pow(2, num) - 1; // M(n) = 2^n - 1 
 		initializeGame(torre, num);
 
 		while(!isGameWon(torre, num)) {
