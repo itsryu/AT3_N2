@@ -7,8 +7,10 @@
 #include "../includes/functions.h"
 
 void configEnviroment() {
-	system("color 17");
-	system("title Torre de Hanoi");
+	#ifdef _WIN32
+		system("color 17");
+		system("title Torre de Hanoi");
+	#endif
 
 	char* local = setlocale(LC_ALL, "");
 
@@ -31,7 +33,7 @@ void clearScreen() {
 	#endif
 }
 
-void backToMenu(int X, int Y) {
+void backToMenu(const int X, const int Y) {
 	pauseScreen();
 	clearScreen();
 	showMenu(X, Y);
@@ -74,34 +76,4 @@ int scanfXY(const int X, const int Y, const char* format, ...) {
     va_end(args);
 
 	return scan;
-}
-
-void waitScreen() {
-	int i = 0;
-	char str[120] = {""};
-
-	while(i <= 100) {
-		if(i % 2) strcat(str, "=");
-
-		clearScreen();
-
-		printf("                      ""+-------------------------------------------------+");
-		printf("\n  Carregando programa |");
-
-		textColor(YELLOW);
-		printf("  %s ", str);
-
-		textColor(WHITE);
-		printf("\n                      ""+-------------------------------------------------+");
-		gotoXY(64, 1);
-		printf("        ""| %d%% ", i);
-		Sleep(5);
-		textColor(WHITE);
-
-		i++;
-	}
-
-	clearScreen();
-	printf("Carregado %d%%", i - 1);
-	Sleep(1000);
 }

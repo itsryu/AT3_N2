@@ -1,13 +1,12 @@
 ﻿#include <conio.h>
 #include <stdio.h>
-#include <windows.h>
 #include <stdlib.h>
 
 #include "../includes/functions.h"
 
 static int option(const int X, const int Y);
 
-void showMenu(int X, int Y) {
+void showMenu(const int X, int Y) {
 	int key = 0;
 
 	textBackground(GREEN);

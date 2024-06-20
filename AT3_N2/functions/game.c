@@ -71,7 +71,7 @@ static void moveDisk(Torre* origem, Torre* dest, int* movements) {
 	if(origem->topo == NULL) {
 		clearScreen();
 		textBackground(RED);
-		printf("\nMovimento incorreto! A torre de origem está vazia.");
+		printf("\nMovimento incorreto! A torre de selecionada está vazia.");
 	} else if(dest->topo != NULL && origem->topo->num > dest->topo->num) {
 		clearScreen();
 		textBackground(RED);
@@ -126,9 +126,7 @@ static void printTowers(Torre** torre, int num, const int X, const int Y) {
 	char caractere[100];
 
 	textBackground(GREEN);
-	printXY(
-		X, y++,
-		" +------------------------ Torre de Hanoi --------------------------+");
+	printXY(X, y++," +------------------------ Torre de Hanoi --------------------------+");
 	printXY(X, y++, " |                                                                  |");
 	printXY(X, y++, " |          A                     B                     C           |");
 	printXY(X, y++, " |                                                                  |");
@@ -161,6 +159,7 @@ static void printTowers(Torre** torre, int num, const int X, const int Y) {
 	printXY(X, y++, " +------------------------------------------------------------------+");
 	printf("\n\n");
 }
+
 void gameEngine(const int X, const int Y) {
 	int num = 0, y = 5;
 
@@ -180,12 +179,12 @@ void gameEngine(const int X, const int Y) {
 
 		textBackground(RED);
 		textColor(WHITE);
-		printXY(X, y++, "+---------------- Discos ------------------+");
+		printXY(X, y++, "+----------------- Discos -----------------+");
 		printXY(X, y++, "|                                          |");
 		printXY(X, y++, "|      Digite a quantidade de discos:      |");
 		printXY(X, y++, "|                                          |");
 		printXY(X, y++, "|                                          |");
-		printXY(X, y++, "| * Deve ser maior que 3 ou menor que 10   |");
+		printXY(X, y++, "|  * Deve ser maior que 2 ou menor que 10  |");
 		printXY(X, y++, "|                                          |");
 		printXY(X, y++, "+------------------------------------------+");
 		textBackground(BLUE);
@@ -227,6 +226,6 @@ void gameEngine(const int X, const int Y) {
 			free(torre[i]);
 		}
 
-		backToMenu(X, Y);
+		backToMenu(45, 5);
 	}
 }
