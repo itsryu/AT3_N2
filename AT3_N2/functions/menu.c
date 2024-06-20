@@ -30,8 +30,7 @@ void showMenu(int X, int Y) {
 
 		if(key == 224) {
 			switch(getch()) {
-				case DOWN:
-				{
+				case DOWN: {
 					if(y > 7) {
 						gotoXY(X, y);
 						printf(" ");
@@ -40,8 +39,7 @@ void showMenu(int X, int Y) {
 					}
 					break;
 				}
-				case UP:
-				{
+				case UP: {
 					if(y < 9) {
 						gotoXY(X, y);
 						printf(" ");
@@ -63,8 +61,7 @@ void showMenu(int X, int Y) {
 		}
 	}
 
-	end:
-	{
+	end: {
 		textBackground(BLUE);
 		pauseScreen();
 		exit(0);
@@ -77,16 +74,14 @@ static int option(const int X, const int Y) {
 	int center = 0, y = 5;
 
 	switch(Y) {
-		case 7:
-		{
+		case 7: {
 			center = 40;
 			textBackground(BLUE);
 			gameEngine(center, Y);
 			break;
 		}
 
-		case 8:
-		{
+		case 8: {
 			center = 30;
 
 			textBackground(GREEN);
@@ -111,8 +106,7 @@ static int option(const int X, const int Y) {
 			break;
 		}
 
-		case 9:
-		{
+		case 9: {
 			center = 30;
 
 			textBackground(RED);

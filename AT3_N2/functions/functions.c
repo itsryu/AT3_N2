@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <stdarg.h>
 
 #include "../includes/functions.h"
 
@@ -14,8 +15,6 @@ void configEnviroment() {
 	if(local == NULL || strcmp(local, "Portuguese_Brazil.1252") != 0) {
 		#ifdef _WIN32
 			setlocale(LC_ALL, "Portuguese");
-		#elif __linux__
-			setlocale(LC_ALL, "pt_BR.UTF-8");
 		#endif
 	}
 }
@@ -24,8 +23,6 @@ void pauseScreen() {
 	#ifdef _WIN32
 		system("pause");
 	#endif
-
-	return;
 }
 
 void clearScreen() {
@@ -68,13 +65,15 @@ void printXY(int X, int Y, char* input) {
 	printf("%s", input);
 }
 
-void scanfXY(const int X, const int Y, const char* format, ...) {
+int scanfXY(const int X, const int Y, const char* format, ...) {
 	gotoXY(X, Y);
 
     va_list args;
     va_start(args, format);
-    vscanf(format, args);
+    int scan = vscanf(format, args);
     va_end(args);
+
+	return scan;
 }
 
 void waitScreen() {

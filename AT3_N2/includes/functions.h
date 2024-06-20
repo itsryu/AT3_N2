@@ -1,9 +1,14 @@
 #pragma	once
 
-typedef struct {
-    int value;
-    struct Node* top;
-} Node;
+typedef struct No {
+    int num;
+    struct No* prox;
+} No;
+
+typedef struct Torre {
+    No* topo;
+    int tam;
+} Torre;
 
 typedef enum DOS_COLORS {
   BLACK,
@@ -29,6 +34,7 @@ typedef enum DOS_COLORS {
 #define UP 80
 #define DOWN 72
 #define ENTER 13
+#define TORRES 3
 
 void configEnviroment();
 void clearScreen();
@@ -39,6 +45,6 @@ void gotoXY(int X, int Y);
 void textColor(DOS_COLORS color);
 void textBackground(DOS_COLORS color);
 void printXY(int X, int Y, char* input);
-void scanfXY(const int X, const int Y, const char* format, ...);
+int scanfXY(const int X, const int Y, const char* format, ...);
 void waitScreen();
 void gameEngine(const int X, const int Y);
